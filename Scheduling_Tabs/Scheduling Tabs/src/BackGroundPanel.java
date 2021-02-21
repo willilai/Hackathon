@@ -6,7 +6,7 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.util.*;
 public class BackGroundPanel extends JPanel{
-	ArrayList<Image> backPics;String pics;ArrayList<String> dialogs;
+	ArrayList<Image> backPics;String pics;
 	File resourceDir;
 	Image[] backPics2;
 	JFrame jf;
@@ -47,7 +47,6 @@ public class BackGroundPanel extends JPanel{
 		}
 		this.setSize(random.getWidth(null)/c,random.getHeight(null)/c);
 		jf.setSize(random.getWidth(null)/c,random.getHeight(null)/c);
-		System.out.println("Resized");
 	}
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);

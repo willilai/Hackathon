@@ -4,6 +4,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -183,7 +185,73 @@ public class GUI {
 				update();
 			}}
 		});
-	
+		
+		
+		input.addKeyListener(new KeyListener() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				// TODO Auto-generated method stub
+				if(e.getKeyCode()==KeyEvent.VK_S&&e.isControlDown()) {
+					if(favorLists.getSelectedItem()=="Select Your List") {
+						String fileName=JOptionPane.showInputDialog(bgp,"Please type in list name","Please type in list name",1);
+						if(fileName!=null) {
+						File saveCopy = new File(System.getProperty("user.dir")+"\\Lists\\"+fileName+".txt");
+						if(saveCopy.exists()) {
+							File temp = new File(System.getProperty("user.dir")+"\\Lists\\"+"."+saveCopy.getName());
+							if(temp.exists()) {
+								JOptionPane.showMessageDialog(null,"This List already exists!","Error ",0);
+							}
+							saveCopy.renameTo(temp);
+							System.out.println("SC:"+saveCopy.toString());
+							System.out.println("Temp"+temp.toString());
+						}
+						try {
+							saveCopy.createNewFile();
+						} catch (IOException e1) {
+							e1.printStackTrace();
+						}
+						try {
+							for(String str:displaySites) {
+							FileWriter tempWriter = new FileWriter(saveCopy,true);
+							bw=new BufferedWriter(tempWriter);
+							bw.append(str+"\n");
+							bw.close();
+							}
+							
+						} catch (IOException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+						
+						favorLists.addItem(saveCopy.getName());
+						statusText="Saved current list successfully.";
+						displaySites=new ArrayList<String>();
+						File listDir=new File(System.getProperty("user.dir")+"\\Lists");
+						String[] files = listDir.list();
+						favorLists.removeAllItems();
+						System.out.println("???");
+						favorLists.addItem("Select Your List");
+						for(String str:files) {
+							favorLists.addItem(str);
+						}
+						update();
+					}
+					}
+				}
+			}
+
+			@Override
+			public void keyReleased(KeyEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void keyTyped(KeyEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
 		save.addActionListener(new ActionListener() {
 			
 			@Override
@@ -191,6 +259,7 @@ public class GUI {
 				// TODO Auto-generated method stub
 				if(favorLists.getSelectedItem()=="Select Your List") {
 					String fileName=JOptionPane.showInputDialog(bgp,"Please type in list name","Please type in list name",1);
+					if(fileName!=null) {
 					File saveCopy = new File(System.getProperty("user.dir")+"\\Lists\\"+fileName+".txt");
 					if(saveCopy.exists()) {
 						File temp = new File(System.getProperty("user.dir")+"\\Lists\\"+"."+saveCopy.getName());
@@ -232,6 +301,67 @@ public class GUI {
 					}
 					update();
 				}
+				}
+			}
+		});
+		
+		sites.addKeyListener(new KeyListener() {
+			
+			@Override
+			public void keyTyped(KeyEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void keyReleased(KeyEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void keyPressed(KeyEvent e) {
+				// TODO Auto-generated method stub
+				int index=0;
+				if(e.getKeyCode()==KeyEvent.VK_DELETE) {
+					if(sites.getSelectedIndex()>=0) {
+						index=sites.getSelectedIndex();
+						for(int i=0;i<displaySites.size();i++) {
+							if(displaySites.get(i)==sites.getSelectedValue()) {
+								try {
+									
+									trashChannel=new FileWriter(System.getProperty("user.dir")+"\\Lists\\trash.txt",true);
+									bw=new BufferedWriter(trashChannel);
+									bw.append(displaySites.get(i)+"\n");
+									bw.close();
+								} catch (IOException e1) {
+									e1.printStackTrace();
+								}
+								displaySites.remove(i);
+							}
+
+						}
+
+						statusText="Successfully removed";
+
+					}else {
+						statusText="Nothing to remove";
+					}
+					File listDir=new File(System.getProperty("user.dir")+"\\Lists");
+					try {
+						BufferedWriter temp=new BufferedWriter(new FileWriter(System.getProperty("user.dir")+"\\Lists\\"+favorLists.getSelectedItem().toString()));
+						for(String str:displaySites) {
+							temp.write(str+"\n");
+						}
+						temp.close();
+					
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+					
+					update();
+				}
 			}
 		});
 		remove.addActionListener(new ActionListener() {
@@ -261,7 +391,18 @@ public class GUI {
 					statusText="Nothing to remove";
 				}
 				File listDir=new File(System.getProperty("user.dir")+"\\Lists");
-
+				try {
+					BufferedWriter temp=new BufferedWriter(new FileWriter(System.getProperty("user.dir")+"\\Lists\\"+favorLists.getSelectedItem().toString()));
+					for(String str:displaySites) {
+						temp.write(str+"\n");
+					}
+					temp.close();
+				
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				
 				update();
 			}
 		});
